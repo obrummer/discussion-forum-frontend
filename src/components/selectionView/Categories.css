@@ -1,0 +1,4 @@
+.list-group-item:hover {
+    color: black;
+    background-color:rgb(240, 233, 233);
+}
