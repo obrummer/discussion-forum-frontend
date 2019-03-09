@@ -1,56 +1,43 @@
-import React, { Component } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AppNavigation from "./components/appNavigation/AppNavigation";
 import SelectionView from "./components/selectionView/SelectionView";
-import LoginForm from "./components/appNavigation/LoginForm";
-import SignupForm from "./components/appNavigation/SignupForm";
+import LoginFormContainer from "./components/appNavigation/LoginFormContainer";
 import Profile from "./components/appNavigation/Profile";
 import DiscussionView from "./components/discussionView/DiscussionView";
 import PageNotFound from "./components/PageNotFound";
 import "./App.css";
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { logged_in: false, user: "" };
-    this.userLogin = this.userLogin.bind(this);
-    this.userLogout = this.userLogout.bind(this);
+    if (localStorage.getItem("auth") && localStorage.getItem("name")) {
+      this.state = { logged: true, user: localStorage.getItem("name") };
+    } else {
+      this.state = { logged: false, user: "" };
+    }
   }
 
-  userLogin(name) {
-    this.setState({ logged_in: true, user: name });
-  }
+  onLogout = () => {
+    localStorage.removeItem("auth");
+    localStorage.removeItem("name");
+    this.setState({ logged: false, user: "" });
+  };
 
-  userLogout() {
-    localStorage.clear();
-    this.setState({ logged_in: false, user: "" });
-  }
+  onLogin = name => {
+    this.setState({ logged: true, user: name });
+  };
 
   render() {
     return (
       <Router>
         <div>
-          <AppNavigation
-            userAuth={this.state.logged_in}
-            userName={this.state.user}
-            onLogout={this.userLogout}
-          />
+          <AppNavigation user={this.state.user} handleLogout={this.onLogout} />
           <Switch>
             <Route exact path="/" component={SelectionView} />
-            <Route
-              path="/login"
-              render={props => (
-                <LoginForm {...props} onLogin={this.userLogin} />
-              )}
-            />
-            <Route path="/signup" component={SignupForm} />
+            <Route path="/login" render={props => <LoginFormContainer {...props} handleLogin={this.onLogin} />} />
             <Route path="/profile" component={Profile} />
-            <Route
-              path="/discussion/:id"
-              render={props => (
-                <DiscussionView {...props} isAuth={this.state.logged_in} />
-              )}
-            />
+            <Route path="/discussion/:id" component={DiscussionView} />
             <Route path="**" component={PageNotFound} />
           </Switch>
         </div>

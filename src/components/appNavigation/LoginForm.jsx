@@ -1,50 +1,80 @@
-import React, { Component } from 'react';
-import { login } from '../../API/serviceClient';
+import React, { Component } from "react";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import "./LoginForm.css";
 
 class LoginForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { username: '', pwinput: '' };
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.state = { username: "", pwinput: "" };
+  }
 
-    handleNameChange = (e) => {
-        const uusiarvo = e.target.value;
-        this.setState({ username: uusiarvo });
-    }
-    handlePasswordChange = (e) => {
-        const uusiarvo = e.target.value;
-        this.setState({ pwinput: uusiarvo });
-    }
-    handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!this.state.username || !this.state.pwinput) {
-            alert('Please fill both username and password');
-            return;
-        }
-        try {
-            let res = await login(this.state);
-            this.props.onLogin(res.user);
-            this.props.history.push('/');
-        } catch (error) {
-            console.error(error);
-        }
-        this.setState({ username: '', pwinput: '' });
-    }
+  handleUserNameChange = e => {
+    this.setState({ username: e.target.value });
+  };
 
-    render() {
-        return (
-            <form>
-                <input type="text" placeholder="Username"
-                    value={this.state.username} onChange={this.handleNameChange} /><br />
-                <input type="password" placeholder="Password"
-                    value={this.state.pwinput} onChange={this.handlePasswordChange} /><br />
-                <input type="submit" value="Login" onClick={this.handleSubmit} />
-            </form>
-        );
-    }
+  handlePasswordChange = e => {
+    this.setState({ pwinput: e.target.value });
+  };
+
+  handleLogin = e => {
+    this.props.onLogin(this.state);
+    this.setState({ username: "", pwinput: "" });
+  };
+
+  handleSignup = e => {
+    this.props.onSignup(this.state);
+    this.setState({ username: "", pwinput: "" });
+  };
+
+  render() {
+    return (
+      <Form className="loginForm">
+        <Form.Group as={Row} controlId="username">
+          <Col sm={4} />
+          <Col sm={4}>
+            <Form.Control
+              type="text"
+              onChange={this.handleUserNameChange}
+              value={this.state.username}
+              placeholder="Username"
+              autoComplete="off"
+            />
+          </Col>
+          <Col sm={4} />
+        </Form.Group>
+
+        <Form.Group as={Row} controlId="password">
+          <Col sm={4} />
+          <Col sm={4}>
+            <Form.Control
+              type="password"
+              onChange={this.handlePasswordChange}
+              value={this.state.pwinput}
+              placeholder="Password"
+              autoComplete="off"
+            />
+          </Col>
+          <Col sm={4} />
+        </Form.Group>
+        <Form.Group as={Row}>
+          <Col sm={4} />
+          <Col sm={4}>
+            <Button type="button" onClick={this.handleLogin}>
+              Login
+            </Button>
+            or
+            <Button type="button" onClick={this.handleSignup}>
+              Create user account
+            </Button>
+          </Col>
+          <Col sm={4} />
+        </Form.Group>
+      </Form>
+    );
+  }
 }
 
 export default LoginForm;
