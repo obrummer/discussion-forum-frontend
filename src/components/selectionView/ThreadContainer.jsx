@@ -4,6 +4,46 @@ import Thread from "./Thread";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+const ThreadContainer = props => {
+  let newList = [];
+  if (props.selectedCategory) {
+    newList = props.threadList
+      .filter(thread => thread.category === props.selectedCategory)
+      .map(thread => {
+        return (
+          <Col lg={6} key={thread.id}>
+            <Thread
+              text={thread.topic || "no content"}
+              thread_id={thread.id}
+              imageName={mapCategoryToImg(thread.category)}
+            />
+          </Col>
+        );
+      });
+  } else {
+    newList = props.threadList.map(thread => {
+      return (
+        <Col lg={6} key={thread.id}>
+          <Thread
+            text={thread.topic || "no content"}
+            thread_id={thread.id}
+            imageName={mapCategoryToImg(thread.category)}
+          />
+        </Col>
+      );
+    });
+  }
+
+  return (
+    <Container>
+      <Row> {newList} </Row>
+    </Container>
+  );
+};
+
+export default ThreadContainer;
+
+// helper
 const mapCategoryToImg = category => {
   let imgName = "";
   switch (category) {
@@ -43,42 +83,3 @@ const mapCategoryToImg = category => {
   }
   return "images/" + imgName;
 };
-
-const ThreadContainer = props => {
-  let newList = [];
-  if (props.selectedCategory) {
-    newList = props.threadList
-      .filter(thread => thread.category === props.selectedCategory)
-      .map(thread => {
-        return (
-          <Col lg={6} key={thread.id}>
-            <Thread
-              text={thread.topic || "no content"}
-              thread_id={thread.id}
-              imageName={mapCategoryToImg(thread.category)}
-            />
-          </Col>
-        );
-      });
-  } else {
-    newList = props.threadList.map(thread => {
-      return (
-        <Col lg={6} key={thread.id}>
-          <Thread
-            text={thread.topic || "no content"}
-            thread_id={thread.id}
-            imageName={mapCategoryToImg(thread.category)}
-          />
-        </Col>
-      );
-    });
-  }
-
-  return (
-    <Container>
-      <Row> {newList} </Row>
-    </Container>
-  );
-};
-
-export default ThreadContainer;

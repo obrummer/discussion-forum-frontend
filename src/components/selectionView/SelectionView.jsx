@@ -1,41 +1,33 @@
-import React, { Component } from "react";
+import React from "react";
 import Categories from "./Categories";
 import ThreadContainer from "./ThreadContainer";
+import ContentLoading from "./ContentLoading";
+import AddThread from "./AddThread";
+
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./SelectionView.css";
-import AddThread from "./AddThread";
 import { getAllThreads } from "../../API/serviceClient";
 
-export default class SelectionView extends Component {
+export default class SelectionView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { category: "", uniqueCategories: "", allThreads: "" };
+    this.state = { category: "", uniqueCategories: "", allThreads: "", error: false };
     this.handleUpdate = this.handleUpdate.bind(this);
   }
 
-  async componentDidMount() {
-    try {
-      let res = await getAllThreads();
-      let uniques = [];
-      for (let o of res.message) {
-        let found = false;
-        for (let u of uniques) {
-          if (u.category === o.category) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          uniques.push(o);
-        }
+  componentDidMount() {
+    getAllThreads().then(
+      res => {
+        let uniques = getUniques(res.message);
+        uniques.unshift({ id: "-1", category: "All Categories" });
+        this.setState({ uniqueCategories: uniques, allThreads: res.message });
+      },
+      err => {
+        this.setState({ error: true });
       }
-      uniques.unshift({ id: "-1", category: "All Categories" });
-      this.setState({ uniqueCategories: uniques, allThreads: res.message });
-    } catch (error) {
-      console.error(error);
-    }
+    );
   }
 
   handleUpdate(newCategory) {
@@ -47,8 +39,7 @@ export default class SelectionView extends Component {
       <Container>
         <Row className="justify-content-md-center">
           <Col md="auto">
-            {" "}
-            {this.state.uniqueCategories ? <AddThread listContent={this.state.uniqueCategories} /> : <p>loading..</p>}
+            {this.state.uniqueCategories ? <AddThread listContent={this.state.uniqueCategories} /> : <ContentLoading />}
           </Col>
         </Row>
         <Row>
@@ -56,14 +47,14 @@ export default class SelectionView extends Component {
             {this.state.uniqueCategories ? (
               <Categories onClick={this.handleUpdate} listContent={this.state.uniqueCategories} />
             ) : (
-              <p>loading..</p>
+              <ContentLoading />
             )}
           </Col>
           <Col lg={9}>
             {this.state.allThreads ? (
               <ThreadContainer threadList={this.state.allThreads} selectedCategory={this.state.category} />
             ) : (
-              <p>loading..</p>
+              <ContentLoading />
             )}
           </Col>
         </Row>
@@ -71,3 +62,21 @@ export default class SelectionView extends Component {
     );
   }
 }
+
+// helper
+const getUniques = objects => {
+  let uniques = [];
+  for (let o of objects) {
+    let found = false;
+    for (let u of uniques) {
+      if (u.category === o.category) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      uniques.push(o);
+    }
+  }
+  return uniques;
+};
