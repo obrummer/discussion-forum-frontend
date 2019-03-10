@@ -18,24 +18,44 @@ export const getMessagesWithThreadId = async id => {
   }
 };
 
-export const postNewMessage = async (content, thread_id) => {
-  let token = localStorage.getItem("auth");
-  let bodyData = { content, thread_id };
+export const postNewThread = async bodyData => {
+  let h = new Headers();
+  h.append("Authorization", localStorage.getItem("auth"));
+  h.append("Content-Type", "application/json");
   try {
-    var myHeaders = new Headers();
-    if (token) {
-      myHeaders.append("Authorization", token);
-    }
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Accept", "application/json");
-    let res = await fetch("/api/messages", {
+    let res = await fetch("/api/thread", {
       method: "POST",
       mode: "cors",
-      headers: myHeaders,
+      headers: h,
       body: JSON.stringify(bodyData)
     });
     let jsonRes = await res.json();
-    return jsonRes.success;
+    if (!jsonRes.success) {
+      throw new Error(jsonRes.message);
+    }
+    return jsonRes;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postNewMessage = async bodyData => {
+  try {
+    let h = new Headers();
+    h.append("Authorization", localStorage.getItem("auth") || '');
+    h.append("Content-Type", "application/json");
+    h.append("Accept", "application/json");
+    let res = await fetch("/api/messages", {
+      method: "POST",
+      mode: "cors",
+      headers: h,
+      body: JSON.stringify(bodyData)
+    });
+    let jsonRes = await res.json();
+    if (!jsonRes.success) {
+      throw new Error(jsonRes.message);
+    }
+    return jsonRes;
   } catch (error) {
     throw error;
   }
@@ -52,12 +72,11 @@ export const login = async userInput => {
       },
       body: JSON.stringify(userInput)
     });
-    if (!response.ok) {
-      throw new Error('User login unsuccessful');
-    }
-    const token = response.headers.get("Authorization");
-    localStorage.setItem("auth", token);
     let jsonRes = await response.json();
+    if (!jsonRes.success) {
+      throw new Error(jsonRes.message);
+    }
+    localStorage.setItem("auth", response.headers.get("Authorization"));
     localStorage.setItem("name", jsonRes.user);
     return jsonRes;
   } catch (error) {
@@ -76,10 +95,10 @@ export const register = async userInput => {
       },
       body: JSON.stringify(userInput)
     });
-    if (!response.ok) {
-      throw new Error("User registration unsuccessful");
-    }
     let jsonRes = await response.json();
+    if (!jsonRes.success) {
+      throw new Error(jsonRes.message);
+    }
     return jsonRes;
   } catch (error) {
     throw error;
