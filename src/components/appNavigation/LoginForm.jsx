@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import "./LoginForm.css";
+import "./styles/LoginForm.css";
 
 class LoginForm extends Component {
   constructor(props) {

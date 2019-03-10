@@ -7,7 +7,7 @@ import { postNewThread } from "../../API/serviceClient";
 class AddThreadForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { category: "javascript", topic: "" };
+    this.state = { category_id: "", topic: "" };
   }
 
   handleChange = event => {
@@ -32,24 +32,24 @@ class AddThreadForm extends Component {
 
   render() {
     let optionList = this.props.listContent
-      .filter(option => option.category.toLowerCase() !== "all categories")
+      .filter(option => option.id !== -1)
       .map(option => {
         return (
-          <option key={option.id} value={option.category.toLowerCase()}>
-            {option.category}
+          <option key={option.id} value={option.id}>
+            {option.name}
           </option>
         );
       });
 
     return (
       <Form>
-        <Form.Group controlId="exampleForm.ControlInput1">
+        <Form.Group>
           <Form.Label>Input your topic</Form.Label>
           <Form.Control type="text" name="topic" placeholder="Topic" autoComplete="off" onChange={this.handleChange} />
         </Form.Group>
-        <Form.Group controlId="exampleForm.ControlSelect1">
+        <Form.Group>
           <Form.Label>Select category</Form.Label>
-          <Form.Control as="select" name="category" onChange={this.handleChange} value={this.state.category}>
+          <Form.Control as="select" name="category_id" onChange={this.handleChange}>
             {optionList}
           </Form.Control>
         </Form.Group>

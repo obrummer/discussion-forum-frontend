@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "./AppNavigation.css";
+import "./styles/AppNavigation.css";
 
 const AppNavigation = props => {
   return (

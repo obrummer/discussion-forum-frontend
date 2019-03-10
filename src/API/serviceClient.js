@@ -11,6 +11,19 @@ export const getAllThreads = async () => {
   }
 };
 
+export const getAllCategories = async () => {
+  try {
+    let res = await fetch("/api/categories");
+    let jsonRes = await res.json();
+    if (!jsonRes.success) {
+      throw new Error(jsonRes.message);
+    }
+    return jsonRes;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getMessagesWithThreadId = async id => {
   try {
     let res = await fetch("/api/messages/thread/" + id);
@@ -26,7 +39,7 @@ export const getMessagesWithThreadId = async id => {
 
 export const postNewThread = async bodyData => {
   let h = new Headers();
-  h.append("Authorization", localStorage.getItem("auth"));
+  h.append("Authorization", localStorage.getItem("auth") || "");
   h.append("Content-Type", "application/json");
   try {
     let res = await fetch("/api/thread", {

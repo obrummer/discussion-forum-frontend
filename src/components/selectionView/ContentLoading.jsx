@@ -1,14 +1,12 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import './styles/ContentLoading.css';
 
 const ContentLoading = props => {
   return (
-    <Modal>
-      <Modal.Header closeButton>
-        <Modal.Title>Fuck off!</Modal.Title>
-      </Modal.Header>
-      <Modal.Body />
-    </Modal>
+    <div className="content-loading">
+        <img src="/images/react_icon.png" alt="loading" className="loading-image"/>
+        <p>Loading content...</p>
+    </div>
   );
 };
 

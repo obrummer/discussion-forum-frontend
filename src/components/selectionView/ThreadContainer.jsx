@@ -6,16 +6,16 @@ import Col from "react-bootstrap/Col";
 
 const ThreadContainer = props => {
   let newList = [];
-  if (props.selectedCategory) {
+  if (props.selectedCategory !== -1) {
     newList = props.threadList
-      .filter(thread => thread.category === props.selectedCategory)
+      .filter(thread => thread.category_id === props.selectedCategory)
       .map(thread => {
         return (
           <Col lg={6} key={thread.id}>
             <Thread
-              text={thread.topic || "no content"}
+              text={thread.topic}
               thread_id={thread.id}
-              imageName={mapCategoryToImg(thread.category)}
+              imageName={mapCategoryToImg(thread.category_id)}
             />
           </Col>
         );
@@ -25,9 +25,9 @@ const ThreadContainer = props => {
       return (
         <Col lg={6} key={thread.id}>
           <Thread
-            text={thread.topic || "no content"}
+            text={thread.topic}
             thread_id={thread.id}
-            imageName={mapCategoryToImg(thread.category)}
+            imageName={mapCategoryToImg(thread.category_id)}
           />
         </Col>
       );
@@ -47,38 +47,35 @@ export default ThreadContainer;
 const mapCategoryToImg = category => {
   let imgName = "";
   switch (category) {
-    case "javascript":
+    case 1:
       imgName = "js_icon.png";
       break;
-    case "database":
-      imgName = "database_icon.png";
-      break;
-    case "mongodb":
+    case 2:
       imgName = "mongodb_icon.png";
       break;
-    case "nodejs":
+    case 3:
       imgName = "nodejs_icon.png";
       break;
-    case "postgresql":
+    case 4:
       imgName = "postgres_icon.png";
       break;
-    case "reactjs":
+    case 5:
       imgName = "react_icon.png";
       break;
-    case "angular":
+    case 6:
       imgName = "ng_icon.png";
       break;
-    case "aws":
+    case 7:
       imgName = "aws_icon.png";
       break;
-    case "c++":
+    case 8:
       imgName = "cplusplus_icon.png";
       break;
-    case "java":
+    case 9:
       imgName = "java_icon.png";
       break;
     default:
-      imgName = "javascript_icon.png";
+      imgName = "database_icon.png";
       break;
   }
   return "images/" + imgName;
